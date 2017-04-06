@@ -109,8 +109,6 @@ services:
       - CORE_PEER_ENDORSER_ENABLED=true
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
       - CORE_PEER_ADDRESS=peer0:7051
-    volumes:
-      - /home/vagrant/marbles/chaincode/src/marbles/:/opt/gopath/src/marbles
     links:
       - ca
       - orderer
