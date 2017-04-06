@@ -1,0 +1,1 @@
+exports.getChain = require('./src/getChain');

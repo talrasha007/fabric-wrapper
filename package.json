@@ -17,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/talrasha007/fabric-wrapper/issues"
   },
-  "homepage": "https://github.com/talrasha007/fabric-wrapper#readme"
+  "homepage": "https://github.com/talrasha007/fabric-wrapper#readme",
+  "engines": {
+    "node": ">=7.8.0"
+  },
+  "dependencies": {
+    "fabric-ca-client": "^1.0.0-alpha.0",
+    "fabric-client": "^1.0.0-alpha"
+  }
 }
