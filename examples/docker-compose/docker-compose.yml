@@ -1,0 +1,128 @@
+# https://github.com/yeasy/docker-compose-files/tree/master/hyperledger
+# This compose file will start a Hyperledger Fabric 1.0 MVE, including
+# * ca
+# * orderer
+# * peer
+# * sdk for testing
+
+version: '2.0'
+
+services:
+  ca:
+    image: hyperledger/fabric-ca
+    container_name: fabric-ca
+    hostname: ca
+    ports:
+      - "8888:8888"
+      - "7054:7054"
+    command: fabric-ca-server start -b admin:adminpw
+
+  orderer:
+    image: hyperledger/fabric-orderer
+    container_name: fabric-orderer
+    hostname: orderer
+    environment:
+        - ORDERER_GENERAL_LEDGERTYPE=ram
+        - ORDERER_GENERAL_BATCHTIMEOUT=1s
+        - ORDERER_GENERAL_MAXMESSAGECOUNT=10
+        - ORDERER_GENERAL_MAXWINDOWSIZE=1000
+        - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+        - ORDERER_GENERAL_LISTENPORT=7050
+        - ORDERER_RAMLEDGER_HISTORY_SIZE=100
+        - CONFIGTX_ORDERER_ORDERERTYPE=solo
+    ports:
+      - "7050:7050"
+    command: orderer
+
+  peer0:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-peer0
+    hostname: peer0
+    environment:
+      - CORE_PEER_ID=peer0
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+    links:
+      - ca
+      - orderer
+    ports:
+      - 7051:7051
+      - 7053:7053
+    depends_on:
+      - ca
+      - orderer
+
+  peer1:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-peer1
+    hostname: peer1
+    environment:
+      - CORE_PEER_ID=peer1
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0:7051
+    links:
+      - ca
+      - orderer
+    ports:
+      - 8051:7051
+      - 8053:7053
+    depends_on:
+      - ca
+      - orderer
+      - peer0
+
+  peer2:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-peer2
+    hostname: peer2
+    environment:
+      - CORE_PEER_ID=peer2
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0:7051
+    links:
+      - ca
+      - orderer
+    ports:
+      - 9051:7051
+      - 9053:7053
+    depends_on:
+      - ca
+      - orderer
+      - peer0
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-peer
+    tty: true
+    hostname: cli
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_LOGGING_LEVEL=INFO
+      - CORE_NEXT=true
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ENDORSER_ENABLED=true
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+      - CORE_PEER_ADDRESS=peer0:7051
+    volumes:
+      - /home/vagrant/marbles/chaincode/src/marbles/:/opt/gopath/src/marbles
+    links:
+      - ca
+      - orderer
+      - peer0
+    depends_on:
+      - ca
+      - orderer
+      - peer0
+      - peer1
+      - peer2
+
+#networks:
+#  default:
+#    external:
+#      name: hyperledger_fabric
