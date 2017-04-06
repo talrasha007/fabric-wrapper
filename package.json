@@ -1,0 +1,21 @@
+{
+  "name": "fabric-wrapper",
+  "version": "0.1.0",
+  "description": "A wrapper for fabric-client & fabric-ca-client.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/talrasha007/fabric-wrapper.git"
+  },
+  "keywords": [
+    "blockchain",
+    "hyperledger",
+    "fabric"
+  ],
+  "author": "Tal Rasha (talrasha007@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/talrasha007/fabric-wrapper/issues"
+  },
+  "homepage": "https://github.com/talrasha007/fabric-wrapper#readme"
+}
