@@ -162,7 +162,8 @@ class Chain {
     const info = await this.chain.queryInfo();
     const currentBlockHash = info.currentBlockHash.toHex();
     const previousBlockHash = info.previousBlockHash.toHex();
-    return { currentBlockHash, previousBlockHash };
+    const height = info.height.toInt();
+    return { height, currentBlockHash, previousBlockHash };
   }
 
   async queryBlock(blockId) {
