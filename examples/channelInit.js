@@ -3,9 +3,10 @@ const getChain = require('./getChain');
 (async function () {
   const chain = await getChain();
 
-  console.log('Create channel: ', await chain.createChannel({
-    path: 'channel_ttl.tx'
-  }));
+  const tx = fs.readFileSync(__dirname + '/channel/channel_ttl.tx');
+  console.log('Create channel: ', await chain.createChannel('ttl', tx));
+
+  await new Promise(resolve => setTimeout(resolve, 2000));
 
   console.log('Join channel: ', await chain.joinChannel());
 })();
