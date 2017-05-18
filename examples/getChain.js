@@ -39,9 +39,7 @@ async function fromCert() {
       channelId: 'ttl',
       ordererUrl: 'grpc://localhost:7050',
       peerUrls: [
-        'grpc://localhost:7051',
-        'grpc://localhost:8051',
-        'grpc://localhost:9051'
+        'grpc://localhost:7051'
       ],
       eventUrl: 'grpc://localhost:7053',
       mspId: 'DEFAULT'
@@ -62,9 +60,7 @@ async function fromCa() {
       channelId: 'ttl',
       ordererUrl: 'grpc://localhost:7050',
       peerUrls: [
-        'grpc://localhost:7051',
-        'grpc://localhost:8051',
-        'grpc://localhost:9051'
+        'grpc://localhost:7051'
       ],
       eventUrl: 'grpc://localhost:7053',
       caUrl: 'http://localhost:7054',
