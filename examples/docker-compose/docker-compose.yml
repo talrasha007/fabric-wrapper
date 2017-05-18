@@ -30,18 +30,20 @@ services:
         - ORDERER_GENERAL_LISTENPORT=7050
         - ORDERER_RAMLEDGER_HISTORY_SIZE=100
         - CONFIGTX_ORDERER_ORDERERTYPE=solo
+    volumes:
+        - ../channel/orderer.genesis.block:/var/hyperledger/orderer/orderer.genesis.block
     ports:
       - "7050:7050"
     command: orderer
 
-  peer0:
+  peer:
     extends:
       file: peer.yml
       service: peer
-    container_name: fabric-peer0
-    hostname: peer0
+    container_name: peer
+    hostname: peer
     environment:
-      - CORE_PEER_ID=peer0
+      - CORE_PEER_ID=peer
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
     links:
       - ca
@@ -52,48 +54,6 @@ services:
     depends_on:
       - ca
       - orderer
-
-  peer1:
-    extends:
-      file: peer.yml
-      service: peer
-    container_name: fabric-peer1
-    hostname: peer1
-    environment:
-      - CORE_PEER_ID=peer1
-      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0:7051
-    links:
-      - ca
-      - orderer
-    ports:
-      - 8051:7051
-      - 8053:7053
-    depends_on:
-      - ca
-      - orderer
-      - peer0
-
-  peer2:
-    extends:
-      file: peer.yml
-      service: peer
-    container_name: fabric-peer2
-    hostname: peer2
-    environment:
-      - CORE_PEER_ID=peer2
-      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0:7051
-    links:
-      - ca
-      - orderer
-    ports:
-      - 9051:7051
-      - 9053:7053
-    depends_on:
-      - ca
-      - orderer
-      - peer0
 
   cli:
     container_name: cli
@@ -108,17 +68,15 @@ services:
       - CORE_PEER_ID=cli
       - CORE_PEER_ENDORSER_ENABLED=true
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
-      - CORE_PEER_ADDRESS=peer0:7051
+      - CORE_PEER_ADDRESS=peer:7051
     links:
       - ca
       - orderer
-      - peer0
+      - peer
     depends_on:
       - ca
       - orderer
-      - peer0
-      - peer1
-      - peer2
+      - peer
 
 #networks:
 #  default:
