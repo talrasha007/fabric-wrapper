@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const utils = require('fabric-client/lib/utils');
 const EventHub = require('fabric-client/lib/EventHub.js');
+const Client = require('fabric-client');
 
 function convertProposalRes(res) {
   const [proposalResponses, proposal, header] = res;
@@ -12,22 +13,28 @@ class Chain {
   constructor(enrollObj, options) {
     let eventhub;
     if (options.eventUrl) {
-      eventhub = new EventHub();
+      eventhub = new EventHub(enrollObj.client);
       eventhub.setPeerAddr(options.eventUrl);
       eventhub.connect();
     }
 
     Object.assign(this, {
+      get client() { return enrollObj.client },
       get chain() { return enrollObj.chain; },
       get submitter() { return enrollObj.submitter; },
-      get eventhub() { return eventhub }
+      get eventhub() { return eventhub },
+      get orderer() { return enrollObj.orderer }
       // get options() { return options; }
     });
   }
 
+  initialize() {
+    return this.chain.initialize();
+  }
+
   buildTransactionID() {
     const nonce = utils.getNonce();
-    const txId = this.chain.buildTransactionID(nonce, this.submitter);
+    const txId = Client.buildTransactionID(nonce, this.submitter);
     return { nonce, txId };
   }
 
@@ -54,11 +61,11 @@ class Chain {
   }
 
   async queryChannels(peerIdx = 0) {
-    return await this.chain.queryChannels(this.chain.getPeers()[peerIdx]);
+    return await this.client.queryChannels(this.chain.getPeers()[peerIdx]);
   }
 
   async queryInstalledChaincodes(peerIdx = 0) {
-    return await this.chain.queryInstalledChaincodes(this.chain.getPeers()[peerIdx]);
+    return await this.client.queryInstalledChaincodes(this.chain.getPeers()[peerIdx]);
   }
 
   async queryInstantiatedChaincodes() {
@@ -104,14 +111,16 @@ class Chain {
     process.env.GOPATH = path.resolve(parsedPath.dir, '..');
 
     const request = {
+      targets: this.chain.getPeers(),
       chaincodePath: parsedPath.base,
       chaincodeId: opt.name || opt.id || opt.chaincodeId || parsedPath.name,
       chaincodeVersion: opt.version,
+      // chaincodePackage: params.chaincodePackage,
       txId,
       nonce
     };
 
-    return convertProposalRes(await this.chain.sendInstallProposal(request));
+    return convertProposalRes(await this.client.installChaincode(request));
   }
 
   async instantiateChaincode(opt) {
@@ -126,8 +135,8 @@ class Chain {
       chaincodeVersion: opt.version,
       fcn: 'init',
       args: opt.args,
-      txId: txId,
-      nonce: nonce,
+      txId,
+      nonce
     };
 
     await this.chain.initialize();
@@ -135,22 +144,62 @@ class Chain {
     return await this.commitTransaction(res, txId);
   }
 
-  async createChannel(opt) {
-    const data = fs.readFileSync(opt.path);
+  async createChannel(channelId, envelope) {
+    const config = this.client.extractChannelConfig(envelope);
+    const signatures = [this.client.signChannelConfig(config)];
+
+    const { nonce, txId } = this.buildTransactionID();
     const request = {
-      envelope : data,
-      name : opt.name || opt.chain || opt.channel || this.chain.getName(),
-      orderer : this.chain.getOrderers()[0]
+      name : channelId,
+      config,
+      signatures,
+      orderer : this.chain.getOrderers()[0],
+      txId,
+      nonce
     };
 
     // send to orderer
-    return this.chain.createChannel(request);
+    return this.client.createChannel(request);
+  }
+
+  // async updateChannel(channelDesc, msps) {
+  //   const config = await this.chain.buildChannelConfig(
+  //     channelDesc,
+  //     msps.map(m => this.client.newMSP(m))
+  //   );
+  //
+  //   const { nonce, txId } = this.buildTransactionID();
+  //   const request = {
+  //     name : channelDesc.channel.name,
+  //     config,
+  //     signatures: [
+  //       this.client.signChannelConfig(config),
+  //       this.client.signChannelConfig(config)
+  //     ],
+  //     orderer : this.chain.getOrderers()[0],
+  //     txId,
+  //     nonce
+  //   };
+  //
+  //   // send to orderer
+  //   return this.client.createChannel(request);
+  // }
+
+  async getGenesisBlock() {
+    const { nonce, txId } = this.buildTransactionID();
+    const request = {
+      txId : 	txId,
+      nonce : nonce
+    };
+
+    return await this.chain.getGenesisBlock(request);
   }
 
   async joinChannel() {
     const { nonce, txId } = this.buildTransactionID();
     const request = {
       targets : this.chain.getPeers(),
+      block: await this.getGenesisBlock(),
       txId : 	txId,
       nonce : nonce
     };
@@ -167,16 +216,7 @@ class Chain {
   }
 
   async queryBlock(blockId) {
-    const block = await this.chain.queryBlock(blockId);
-    const header = block.header;
-
-    return {
-      number: header.number,
-      previousHash: header.previous_hash.toHex(),
-      dataHash: header.data_hash.toHex(),
-      data: block.data.toBuffer(),
-      metadata: block.metadata.metadata.map(meta => meta.toBuffer())
-    };
+    return await this.chain.queryBlock(blockId);
   }
 }
 

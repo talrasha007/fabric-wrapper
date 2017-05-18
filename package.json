@@ -1,6 +1,6 @@
 {
   "name": "fabric-wrapper",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A wrapper for fabric-client & fabric-ca-client.",
   "main": "index.js",
   "repository": {
@@ -22,7 +22,7 @@
     "node": ">=7.8.0"
   },
   "dependencies": {
-    "fabric-ca-client": "^1.0.0-alpha.0",
-    "fabric-client": "^1.0.0-alpha"
+    "fabric-ca-client": "^1.0.0-alpha2",
+    "fabric-client": "^1.0.0-alpha2"
   }
 }

@@ -6,6 +6,11 @@ const getChain = require('./getChain');
   console.log('Query installed cc for peer0: ', await chain.queryInstalledChaincodes(0));
   console.log('Query instantiated cc: ', await chain.queryInstantiatedChaincodes());
 
+  chain.eventhub.registerBlockEvent(block => {
+    console.log(block.header);
+    console.log(block.data.data[0].toString());
+  });
+
   console.log('Write to ledger for key "ab": ');
   console.log(await chain.invokeChaincode({
     name: 'fcw_example',
