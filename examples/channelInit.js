@@ -1,4 +1,5 @@
 const getChain = require('./getChain');
+const fs = require('fs');
 
 (async function () {
   const chain = await getChain();

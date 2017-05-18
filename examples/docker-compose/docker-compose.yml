@@ -10,7 +10,7 @@ version: '2.0'
 services:
   ca:
     image: hyperledger/fabric-ca
-    container_name: fabric-ca
+    container_name: ca
     hostname: ca
     ports:
       - "8888:8888"
@@ -19,10 +19,10 @@ services:
 
   orderer:
     image: hyperledger/fabric-orderer
-    container_name: fabric-orderer
+    container_name: orderer
     hostname: orderer
     environment:
-        - ORDERER_GENERAL_LEDGERTYPE=ram
+        - ORDERER_GENERAL_LEDGERTYPE=file
         - ORDERER_GENERAL_BATCHTIMEOUT=1s
         - ORDERER_GENERAL_MAXMESSAGECOUNT=10
         - ORDERER_GENERAL_MAXWINDOWSIZE=1000
@@ -30,6 +30,8 @@ services:
         - ORDERER_GENERAL_LISTENPORT=7050
         - ORDERER_RAMLEDGER_HISTORY_SIZE=100
         - CONFIGTX_ORDERER_ORDERERTYPE=solo
+        - ORDERER_GENERAL_GENESISMETHOD=file
+        - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
     volumes:
         - ../channel/orderer.genesis.block:/var/hyperledger/orderer/orderer.genesis.block
     ports:
