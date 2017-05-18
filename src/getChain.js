@@ -63,5 +63,5 @@ module.exports = async function (options) {
   }
   chain.setPrimaryPeer(peers[0]);
 
-  return new Chain({ chain, submitter }, options);
+  return new Chain({ client, chain, submitter }, options);
 };
