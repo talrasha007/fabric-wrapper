@@ -4,7 +4,7 @@ const Block = rewire('fabric-client/lib/Block');
 const path = require('path');
 const grpc = require('grpc');
 
-const protoBase = path.join(require.resolve('fabric-client').replace(/(.+fabric-client)(\/.+)$/, '$1'), '/lib/protos');
+const protoBase = path.join(require.resolve('fabric-client').replace(/(.+fabric-client)([\/\\].+)$/, '$1'), '/lib/protos');
 const Proposal = grpc.load(path.join(protoBase, '/peer/proposal.proto')).protos;
 const Chaincode = grpc.load(path.join(protoBase, '/peer/chaincode.proto')).protos;
 const Common = grpc.load(path.join(protoBase, '/common/common.proto')).common;
