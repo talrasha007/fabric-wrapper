@@ -1,6 +1,6 @@
 {
   "name": "fabric-wrapper",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A wrapper for fabric-client & fabric-ca-client.",
   "main": "index.js",
   "repository": {
@@ -24,6 +24,7 @@
   "dependencies": {
     "fabric-ca-client": "^1.0.0-alpha2",
     "fabric-client": "^1.0.0-alpha2",
+    "jsrsasign": "^6.2.3",
     "rewire": "^2.5.2"
   }
 }

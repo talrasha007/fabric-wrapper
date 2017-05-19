@@ -8,6 +8,7 @@ const getChain = require('./getChain');
 
   chain.eventhub.registerBlockEvent(block => {
     console.log('Cc executed: \n', chain.extractCcExecInfo(block));
+    console.log(block.header);
   });
 
   console.log('Write to ledger for key "ab": ');
