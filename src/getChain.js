@@ -27,8 +27,19 @@ async function getSubmitter(client, options) {
     let enrollment;
 
     if (options.caUrl && options.enrollment.enrollmentSecret) {
-      const caClient = new CaService(options.caUrl);
-      enrollment = await caClient.enroll(options.enrollment);
+      const { enrollmentID, enrollmentSecret, ou } = options.enrollment;
+
+      const caService = new CaService(options.caUrl);
+      const caClient = caService._fabricCAClient;
+
+      const key = await caService.cryptoPrimitives.generateKey();
+      const csr = key.generateCSR(`CN=${enrollmentID},OU=${ou}`);
+      const enrollResponse = await caClient.enroll(enrollmentID, enrollmentSecret, csr);
+      enrollment = {
+        key,
+        certificate: enrollResponse.enrollmentCert,
+        rootCertificate: enrollResponse.caCertChain
+      }
     } else {
       enrollment = options.enrollment;
       enrollment.key = new EcdsaKey(KEYUTIL.getKey(enrollment.key));

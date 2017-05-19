@@ -54,7 +54,8 @@ async function fromCa() {
     {
       enrollment: {
         enrollmentID: 'admin',
-        enrollmentSecret: 'adminpw'
+        enrollmentSecret: 'adminpw',
+        ou: 'COP'
       },
       uuid:'test',
       channelId: 'ttl',
