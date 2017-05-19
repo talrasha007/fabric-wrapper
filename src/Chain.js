@@ -4,6 +4,8 @@ const utils = require('fabric-client/lib/utils');
 const EventHub = require('fabric-client/lib/EventHub.js');
 const Client = require('fabric-client');
 
+const Block = require('./Block');
+
 function convertProposalRes(res) {
   const [proposalResponses, proposal, header] = res;
   return { proposalResponses, proposal, header };
@@ -30,6 +32,27 @@ class Chain {
 
   initialize() {
     return this.chain.initialize();
+  }
+
+  decodeBlock(block) {
+    const { header, data, metadata } = block;
+    const payloads = data.data.map(item => Block.decodeCcPayload(item) || item);
+    return { header, metadata, payloads };
+  }
+
+  extractCcExecInfo(block) {
+    try {
+      block = this.decodeBlock(block);
+      const cs = block.payloads[0].payload.data.chaincode_spec;
+
+      const chaincodeId = cs.chaincode_id;
+      const fn = cs.input.args[0].toBuffer().toString();
+      const args = cs.input.args.slice(1).map(bb => bb.toBuffer());
+
+      return { chaincodeId, fn, args };
+    } catch (_) {
+
+    }
   }
 
   buildTransactionID() {

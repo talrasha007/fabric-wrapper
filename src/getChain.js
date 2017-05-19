@@ -1,3 +1,4 @@
+const rewire = require('rewire');
 const path = require('path');
 const FabricClient = require('fabric-client');
 const Orderer = require('fabric-client/lib/Orderer.js');
@@ -6,7 +7,10 @@ const User = require('fabric-client/lib/User.js');
 const CaService = require('fabric-ca-client/lib/FabricCAClientImpl.js');
 const jsrsa = require('jsrsasign');
 const KEYUTIL = jsrsa.KEYUTIL;
-const EcdsaKey = require('fabric-client/lib/impl/ecdsa/key');
+
+const EcdsaKey = rewire('fabric-client/lib/impl/ecdsa/key');
+EcdsaKey.__set__('KEYUTIL', KEYUTIL); // Fix KEYUTIL issue.
+
 const CryptoSuite = require('fabric-client/lib/impl/CryptoSuite_ECDSA_AES');
 const KeyStore = require('fabric-client/lib/impl/CryptoKeyStore');
 
