@@ -43,13 +43,19 @@ class Chain {
   extractCcExecInfo(block) {
     try {
       block = this.decodeBlock(block);
-      const cs = block.payloads[0].payload.data.chaincode_spec;
+      const payload = block.payloads[0].payload;
+      const header = payload.header.channel_header;
+      const ts = header.timestamp;
+      const txId = header.tx_id;
+      const creator = payload.header.signature_header.creator;
+
+      const cs = payload.data.chaincode_spec;
 
       const chaincodeId = cs.chaincode_id;
       const fn = cs.input.args[0].toBuffer().toString();
       const args = cs.input.args.slice(1).map(bb => bb.toBuffer());
 
-      return { chaincodeId, fn, args };
+      return { chaincodeId, fn, args, ts, txId, creator };
     } catch (_) {
 
     }
