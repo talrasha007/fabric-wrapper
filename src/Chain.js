@@ -3,6 +3,7 @@ const path = require('path');
 const utils = require('fabric-client/lib/utils');
 const EventHub = require('fabric-client/lib/EventHub.js');
 const Client = require('fabric-client');
+const X509 = require('jsrsasign').X509;
 
 const Block = require('./Block');
 
@@ -40,6 +41,19 @@ class Chain {
     return { header, metadata, payloads };
   }
 
+  getCertInfo(cert) {
+    const x509 = new X509();
+    x509.readCertPEM(cert);
+
+    const serial = x509.getSerialNumberHex();
+    const issuer = x509.getIssuerString();
+    const subject = x509.getSubjectString();
+    const pubKey = X509.getPublicKeyFromCertPEM(cert);
+    const pubKeyHex = pubKey.pubKeyHex;
+
+    return { serial, issuer, subject, pubKeyHex, pubKey };
+  }
+
   extractCcExecInfo(block) {
     try {
       block = this.decodeBlock(block);
@@ -48,6 +62,7 @@ class Chain {
       const ts = header.timestamp;
       const txId = header.tx_id;
       const creator = payload.header.signature_header.creator;
+      Object.assign(creator, this.getCertInfo(creator.IdBytes));
 
       const cs = payload.data.chaincode_spec;
 
