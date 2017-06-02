@@ -12,6 +12,19 @@ function convertProposalRes(res) {
   return { proposalResponses, proposal, header };
 }
 
+function getCertInfo(cert) {
+  const x509 = new X509();
+  x509.readCertPEM(cert);
+
+  const serial = x509.getSerialNumberHex();
+  const issuer = x509.getIssuerString();
+  const subject = x509.getSubjectString();
+  const pubKey = X509.getPublicKeyFromCertPEM(cert);
+  const pubKeyHex = pubKey.pubKeyHex;
+
+  return { serial, issuer, subject, pubKeyHex, pubKey };
+}
+
 class Chain {
   constructor(enrollObj, options) {
     let eventhub;
@@ -38,42 +51,48 @@ class Chain {
   decodeBlock(block) {
     const { header, data, metadata } = block;
     const payloads = data.data.map(item => Block.decodeCcPayload(item) || item);
+
+    if (Buffer.isBuffer(header.previous_hash)) {
+      header.previous_hash = header.previous_hash.toString('hex');
+    }
+
+    if (Buffer.isBuffer(header.data_hash)) {
+      header.data_hash = header.data_hash.toString('hex');
+    }
+
     return { header, metadata, payloads };
   }
 
-  getCertInfo(cert) {
-    const x509 = new X509();
-    x509.readCertPEM(cert);
-
-    const serial = x509.getSerialNumberHex();
-    const issuer = x509.getIssuerString();
-    const subject = x509.getSubjectString();
-    const pubKey = X509.getPublicKeyFromCertPEM(cert);
-    const pubKeyHex = pubKey.pubKeyHex;
-
-    return { serial, issuer, subject, pubKeyHex, pubKey };
-  }
 
   extractCcExecInfo(block) {
     try {
       block = this.decodeBlock(block);
-      const payload = block.payloads[0].payload;
-      const header = payload.header.channel_header;
-      const ts = header.timestamp;
-      const txId = header.tx_id;
-      const creator = payload.header.signature_header.creator;
-      Object.assign(creator, this.getCertInfo(creator.IdBytes));
 
-      const cs = payload.data.chaincode_spec;
+      block.payloads.forEach(payloadData => {
+        try {
+          const payload = payloadData.payload;
+          const header = payload.header.channel_header;
+          const ts = header.timestamp;
+          const txId = header.tx_id;
+          const creator = payload.header.signature_header.creator;
+          Object.assign(creator, getCertInfo(creator.IdBytes));
 
-      const chaincodeId = cs.chaincode_id;
-      const fn = cs.input.args[0].toBuffer().toString();
-      const args = cs.input.args.slice(1).map(bb => bb.toBuffer());
+          const cs = payload.data.chaincode_spec;
 
-      return { chaincodeId, fn, args, ts, txId, creator };
+          const chaincodeId = cs.chaincode_id;
+          const fn = cs.input.args[0].toBuffer().toString();
+          const args = cs.input.args.slice(1).map(bb => bb.toBuffer());
+
+          payloadData.payload = { chaincodeId, fn, args, ts, txId, creator };
+        } catch (_) {
+
+        }
+      });
     } catch (_) {
 
     }
+
+    return block;
   }
 
   buildTransactionID() {

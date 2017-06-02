@@ -24,7 +24,8 @@ function decodeCcPayload(envelope) {
       }
     }
   } catch (_) {
-    console.log(_)
+    // console.log(_)
+    return envelope;
   }
 }
 

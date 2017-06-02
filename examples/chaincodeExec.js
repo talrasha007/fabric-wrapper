@@ -7,8 +7,9 @@ const getChain = require('./getChain');
   console.log('Query instantiated cc: ', await chain.queryInstantiatedChaincodes());
 
   chain.eventhub.registerBlockEvent(block => {
-    console.log('Cc executed: \n', chain.extractCcExecInfo(block));
-    console.log(block.header);
+    const decoded = chain.extractCcExecInfo(block);
+    console.log('Cc executed: \n', decoded);
+    console.log(decoded.payloads.map(p => p.payload));
   });
 
   console.log('Write to ledger for key "ab" & "bc": ');
