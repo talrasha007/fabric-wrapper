@@ -11,12 +11,20 @@ const getChain = require('./getChain');
     console.log(block.header);
   });
 
-  console.log('Write to ledger for key "ab": ');
-  console.log(await chain.invokeChaincode({
-    name: 'fcw_example',
-    fcn: 'write',
-    args: ['ab', '300']
-  }));
+  console.log('Write to ledger for key "ab" & "bc": ');
+  const executeResult = Promise.all([
+    chain.invokeChaincode({
+      name: 'fcw_example',
+      fcn: 'write',
+      args: ['ab', '300']
+    }),
+    chain.invokeChaincode({
+      name: 'fcw_example',
+      fcn: 'write',
+      args: ['bc', '100']
+    })
+  ]);
+  console.log(await executeResult);
 
   console.log('Read from ledger for key "ab": ');
   console.log((await chain.queryByChaincode({
@@ -24,4 +32,12 @@ const getChain = require('./getChain');
     fcn: 'read',
     args: ['ab']
   })).map(b => b.toString()));
+
+  console.log('Read from ledger for key "bc": ');
+  console.log((await chain.queryByChaincode({
+    name: 'fcw_example',
+    fcn: 'read',
+    args: ['bc']
+  })).map(b => b.toString()));
+
 })();
