@@ -68,7 +68,7 @@ class Chain {
     try {
       block = this.decodeBlock(block);
 
-      block.payloads.forEach(payloadData => {
+      block.payloads = block.payloads.map(payloadData => {
         try {
           const payload = payloadData.payload;
           const header = payload.header.channel_header;
@@ -83,9 +83,9 @@ class Chain {
           const fn = cs.input.args[0].toBuffer().toString();
           const args = cs.input.args.slice(1).map(bb => bb.toBuffer());
 
-          payloadData.payload = { chaincodeId, fn, args, ts, txId, creator };
+          return { signature: payloadData.signature, chaincodeId, fn, args, ts, txId, creator };
         } catch (_) {
-
+          return payloadData;
         }
       });
     } catch (_) {

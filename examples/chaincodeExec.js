@@ -9,7 +9,7 @@ const getChain = require('./getChain');
   chain.eventhub.registerBlockEvent(block => {
     const decoded = chain.extractCcExecInfo(block);
     console.log('Cc executed: \n', decoded);
-    console.log(decoded.payloads.map(p => p.payload));
+    console.log(decoded.payloads);
   });
 
   console.log('Write to ledger for key "ab" & "bc": ');
