@@ -35,6 +35,7 @@ class Chain {
     }
 
     Object.assign(this, {
+      get pubKey() { return enrollObj.pubKey },
       get client() { return enrollObj.client },
       get chain() { return enrollObj.chain; },
       get submitter() { return enrollObj.submitter; },

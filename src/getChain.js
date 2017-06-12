@@ -52,7 +52,8 @@ async function getSubmitter(client, options) {
     await member.setEnrollment(enrollment.key, enrollment.cert || enrollment.certificate, options.mspId);
     client.setUserContext(member);
 
-    return member;
+    const pubKey = enrollment.key._key.pubKeyHex;
+    return { submitter: member, pubKey };
   }
 }
 
@@ -69,7 +70,7 @@ module.exports = async function (options) {
   });
 
   client.setStateStore(store);
-  const submitter = await getSubmitter(client, options);
+  const { submitter, pubKey } = await getSubmitter(client, options);
   chain.addOrderer(new Orderer(options.ordererUrl));
 
   const peers = options.peerUrls.map(peerUrl => new Peer(peerUrl));
@@ -78,5 +79,5 @@ module.exports = async function (options) {
   }
   chain.setPrimaryPeer(peers[0]);
 
-  return new Chain({ client, chain, submitter }, options);
+  return new Chain({ client, chain, submitter, pubKey }, options);
 };
