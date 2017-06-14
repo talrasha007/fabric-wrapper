@@ -32,9 +32,9 @@ services:
         - ORDERER_GENERAL_GENESISMETHOD=file
         - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
         - ORDERER_GENERAL_TLS_ENABLED=true
-#        - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/fabric/msp/signcerts/peer.pem
-#        - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/fabric/msp/keystore/key.pem
-#        - ORDERER_GENERAL_TLS_ROOTCAS=/etc/hyperledger/fabric/msp/cacerts/cacert.pem
+        - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/fabric/tls/server.crt
+        - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/fabric/tls/server.key
+        - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/fabric/tls/ca.crt]
     volumes:
         - ../channel/orderer.genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./tls/orderer:/etc/hyperledger/fabric/tls
@@ -52,9 +52,11 @@ services:
       - CORE_PEER_ID=peer
 #      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
       - CORE_PEER_TLS_ENABLED=true
-#      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/msp/signcerts/peer.pem
-#      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/msp/keystore/key.pem
-#      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/msp/cacerts/cacert.pem
+      - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
     volumes:
         - ./tls/peer:/etc/hyperledger/fabric/tls
     links:
