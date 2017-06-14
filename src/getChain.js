@@ -1,3 +1,4 @@
+const fs = require('fs');
 const rewire = require('rewire');
 const path = require('path');
 const FabricClient = require('fabric-client');
@@ -57,6 +58,20 @@ async function getSubmitter(client, options) {
   }
 }
 
+function buildConnectionOpt(o) {
+  if (typeof o === 'string') {
+    return [{ url: o }];
+  } else if (o.url) {
+    const pem = o.pem || (o.pemPath || fs.readFileSync(o.pemPath));
+    return [{
+      url: o.url,
+      opt: { pem, 'ssl-target-name-override': o.sslTargetNameOverride }
+    }];
+  } else if (Array.isArray(o)) {
+    return o.map(item => buildConnectionOpt(item)[0])
+  }
+}
+
 module.exports = async function (options) {
   if (!options.uuid) {
     throw new Error('Cannot enroll with undefined uuid');
@@ -71,13 +86,26 @@ module.exports = async function (options) {
 
   client.setStateStore(store);
   const { submitter, pubKey } = await getSubmitter(client, options);
-  chain.addOrderer(new Orderer(options.ordererUrl));
 
-  const peers = options.peerUrls.map(peerUrl => new Peer(peerUrl));
-  for (const peer of peers) {
-    chain.addPeer(peer);
+  const ordererOptVal =
+    options.ordererUrl ||
+    options.ordererUrls ||
+    options.orderer ||
+    options.orderers;
+  for (const ordererOpt of buildConnectionOpt(ordererOptVal)) {
+    const { url, opt } = ordererOpt;
+    chain.addOrderer(new Orderer(url, opt));
   }
-  chain.setPrimaryPeer(peers[0]);
+
+  const peerOptVal =
+    options.peerUrl ||
+    options.peerUrls ||
+    options.peer ||
+    options.peers;
+  for (const peerOpt of buildConnectionOpt(peerOptVal)) {
+    const { url, opt } = peerOpt;
+    chain.addPeer(new Peer(url, opt));
+  }
 
   return new Chain({ client, chain, submitter, pubKey }, options);
 };
