@@ -15,6 +15,7 @@ EcdsaKey.__set__('KEYUTIL', KEYUTIL); // Fix KEYUTIL issue.
 const CryptoSuite = require('fabric-client/lib/impl/CryptoSuite_ECDSA_AES');
 const KeyStore = require('fabric-client/lib/impl/CryptoKeyStore');
 
+const util = require('./util');
 const Chain = require('./Chain');
 const keyStorePath = CryptoSuite.getDefaultKeyStorePath();
 
@@ -58,20 +59,6 @@ async function getSubmitter(client, options) {
   }
 }
 
-function buildConnectionOpt(o) {
-  if (typeof o === 'string') {
-    return [{ url: o }];
-  } else if (o.url) {
-    const pem = o.pem || (o.pemPath || fs.readFileSync(o.pemPath));
-    return [{
-      url: o.url,
-      opt: { pem, 'ssl-target-name-override': o.sslTargetNameOverride }
-    }];
-  } else if (Array.isArray(o)) {
-    return o.map(item => buildConnectionOpt(item)[0])
-  }
-}
-
 module.exports = async function (options) {
   if (!options.uuid) {
     throw new Error('Cannot enroll with undefined uuid');
@@ -87,22 +74,12 @@ module.exports = async function (options) {
   client.setStateStore(store);
   const { submitter, pubKey } = await getSubmitter(client, options);
 
-  const ordererOptVal =
-    options.ordererUrl ||
-    options.ordererUrls ||
-    options.orderer ||
-    options.orderers;
-  for (const ordererOpt of buildConnectionOpt(ordererOptVal)) {
+  for (const ordererOpt of util.getOrdererOpt(options)) {
     const { url, opt } = ordererOpt;
     chain.addOrderer(new Orderer(url, opt));
   }
 
-  const peerOptVal =
-    options.peerUrl ||
-    options.peerUrls ||
-    options.peer ||
-    options.peers;
-  for (const peerOpt of buildConnectionOpt(peerOptVal)) {
+  for (const peerOpt of util.getPeerOpt(options)) {
     const { url, opt } = peerOpt;
     chain.addPeer(new Peer(url, opt));
   }

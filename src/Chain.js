@@ -5,6 +5,7 @@ const EventHub = require('fabric-client/lib/EventHub.js');
 const Client = require('fabric-client');
 const X509 = require('jsrsasign').X509;
 
+const util = require('./util');
 const Block = require('./Block');
 
 function convertProposalRes(res) {
@@ -29,8 +30,9 @@ class Chain {
   constructor(enrollObj, options) {
     let eventhub;
     if (options.eventUrl) {
+      const { opt } = util.getPeerOpt(options)[0];
       eventhub = new EventHub(enrollObj.client);
-      eventhub.setPeerAddr(options.eventUrl);
+      eventhub.setPeerAddr(options.eventUrl, opt);
       eventhub.connect();
     }
 
