@@ -1,4 +1,3 @@
-const fs = require('fs');
 const rewire = require('rewire');
 const path = require('path');
 const FabricClient = require('fabric-client');
