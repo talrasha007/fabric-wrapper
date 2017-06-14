@@ -1,0 +1,23 @@
+# This is the default base file to config env and command
+# Notice that chaincode is executed inside docker in default net mode
+# https://github.com/yeasy/docker-compose-files
+
+# Depends on the hyperledger/fabric-peer image.
+
+version: '2'
+
+services:
+  peer:
+    image: hyperledger/fabric-peer
+    environment:
+      - CORE_LOGGING_LEVEL=INFO
+      - CORE_PEER_ENDORSER_ENABLED=true
+      - CORE_PEER_COMMITTER_ENABLED=true
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_GOSSIP_ORGLEADER=true
+      - CORE_PEER_GOSSIP_IGNORESECURITY=true
+
+      - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
+    volumes: # docker.sock is mapped as the default CORE_VM_ENDPOINT
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: peer node start --peer-defaultchain=false

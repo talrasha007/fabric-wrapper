@@ -4,7 +4,7 @@ function buildConnectionOpt(o) {
   if (typeof o === 'string') {
     return [{ url: o }];
   } else if (o.url) {
-    const pem = o.pem || (o.pemPath && fs.readFileSync(o.pemPath));
+    const pem = o.pem || (o.pemPath && fs.readFileSync(o.pemPath, 'utf8'));
     return [{
       url: o.url,
       opt: { pem, 'ssl-target-name-override': o.sslTargetNameOverride }

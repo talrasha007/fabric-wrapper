@@ -1,14 +1,14 @@
 const fabric = require('../');
 
 const key =
-`-----BEGIN PRIVATE KEY-----
+  `-----BEGIN PRIVATE KEY-----
 MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgCxbAW6cTOrPVGHqe
 8PgyI+QoK2ajHOHeNOq4bkxJt4uhRANCAAQcG4qwA7jeGzgkakV+IYyQH/GwgtOw
 6+Y3ZabCmw8dk0vrDwdZ7fEI9C10b9ckm9n4LvnooSxQEzfLDk9N+S7y
 -----END PRIVATE KEY-----`;
 
 const cert =
-`-----BEGIN CERTIFICATE-----
+  `-----BEGIN CERTIFICATE-----
 MIICjDCCAjKgAwIBAgIUBEVwsSx0TmqdbzNwleNBBzoIT0wwCgYIKoZIzj0EAwIw
 fzELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNh
 biBGcmFuY2lzY28xHzAdBgNVBAoTFkludGVybmV0IFdpZGdldHMsIEluYy4xDDAK
@@ -25,6 +25,24 @@ SM49BAMCA0gAMEUCIDf9Hbl4xn3z4EwNKmilM9lX2Fq4jWpAaRVB97OmVEeyAiEA
 25aDPQHGGq2AvhKT0wvt08cX1GTGCIbfmuLpMwKQj38=
 -----END CERTIFICATE-----`;
 
+const caCert =
+`-----BEGIN CERTIFICATE-----
+MIIB9TCCAZugAwIBAgIJAJPPGB4Yn+s2MAoGCCqGSM49BAMCMFcxCzAJBgNVBAYT
+AkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRn
+aXRzIFB0eSBMdGQxEDAOBgNVBAMMB2NhX3Rlc3QwHhcNMTcwNjE0MTAwMzI3WhcN
+MTcwNzE0MTAwMzI3WjBXMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0
+ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRAwDgYDVQQDDAdj
+YV90ZXN0MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHBuKsAO43hs4JGpFfiGM
+kB/xsILTsOvmN2WmwpsPHZNL6w8HWe3xCPQtdG/XJJvZ+C756KEsUBM3yw5PTfku
+8qNQME4wHQYDVR0OBBYEFOFCdcUZ4es3ltiCgAVDoyLfVpPIMB8GA1UdIwQYMBaA
+FOFCdcUZ4es3ltiCgAVDoyLfVpPIMAwGA1UdEwQFMAMBAf8wCgYIKoZIzj0EAwID
+SAAwRQIhAKRtiNctX5Uvl/21oNXRAmoKge7Yu0cR+GmFmuH9q9AXAiAwQMLKUuM9
+XSZrEBlM6tkjqGu21RVl1tyNe3xB3AQU3A==
+-----END CERTIFICATE-----`;
+
+// process.env.USE_TLS = true;
+const protocol = process.env.USE_TLS ? 'grpcs' : 'grpc';
+
 async function fromCert() {
   console.log('Enroll with cert.');
 
@@ -37,11 +55,19 @@ async function fromCert() {
       },
       uuid:'test',
       channelId: 'ttl',
-      ordererUrl: 'grpc://localhost:7050',
-      peerUrls: [
-        'grpc://localhost:7051'
+      orderer: {
+        url: `${protocol}://localhost:7050`,
+        pem: process.env.USE_TLS && caCert,
+        sslTargetNameOverride: 'orderer'
+      },
+      peers: [
+        {
+          url: `${protocol}://localhost:7051`,
+          pem: process.env.USE_TLS && caCert,
+          sslTargetNameOverride: 'peer'
+        }
       ],
-      eventUrl: 'grpc://localhost:7053',
+      eventUrl: `${protocol}://localhost:7053`,
       mspId: 'DEFAULT'
     }
   );
@@ -59,11 +85,19 @@ async function fromCa() {
       },
       uuid:'test',
       channelId: 'ttl',
-      ordererUrl: 'grpc://localhost:7050',
-      peerUrls: [
-        'grpc://localhost:7051'
+      orderer: {
+        url: `${protocol}://localhost:7050`,
+        pem: process.env.USE_TLS && ca,
+        sslTargetNameOverride: 'orderer'
+      },
+      peers: [
+        {
+          url: `${protocol}://localhost:7051`,
+          pem: process.env.USE_TLS && ca,
+          sslTargetNameOverride: 'peer'
+        }
       ],
-      eventUrl: 'grpc://localhost:7053',
+      eventUrl: `${protocol}://localhost:7053`,
       caUrl: 'http://localhost:7054',
       mspId: 'DEFAULT'
     }
