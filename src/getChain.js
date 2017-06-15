@@ -1,3 +1,4 @@
+const fs = require('fs');
 const rewire = require('rewire');
 const path = require('path');
 const FabricClient = require('fabric-client');
@@ -43,6 +44,9 @@ async function getSubmitter(client, options) {
       }
     } else {
       enrollment = options.enrollment;
+      enrollment.key = enrollment.key || (enrollment.keyPath && fs.readFileSync(enrollment.keyPath));
+      enrollment.cert = enrollment.cert || enrollment.certificate || (enrollment.certPath && fs.readFileSync(enrollment.certPath));
+
       enrollment.key = new EcdsaKey(KEYUTIL.getKey(enrollment.key));
 
       const keyStore = await new KeyStore({ path: keyStorePath });
