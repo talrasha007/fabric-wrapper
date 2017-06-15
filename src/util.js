@@ -7,6 +7,7 @@ function buildConnectionOpt(o) {
     const pem = o.pem || (o.pemPath && fs.readFileSync(o.pemPath, 'utf8'));
     return [{
       url: o.url,
+      eventUrl: o.eventUrl,
       opt: { pem, 'ssl-target-name-override': o.sslTargetNameOverride }
     }];
   } else if (Array.isArray(o)) {

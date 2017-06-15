@@ -65,11 +65,11 @@ async function fromCert() {
       peers: [
         {
           url: `${protocol}://localhost:7051`,
+          eventUrl: `${protocol}://localhost:7053`,
           pem: process.env.USE_TLS && caCert,
           sslTargetNameOverride: 'peer'
         }
       ],
-      eventUrl: `${protocol}://localhost:7053`,
       mspId: 'DEFAULT'
     }
   );
@@ -95,11 +95,11 @@ async function fromCa() {
       peers: [
         {
           url: `${protocol}://localhost:7051`,
+          eventUrl: `${protocol}://localhost:7053`,
           pem: process.env.USE_TLS && ca,
           sslTargetNameOverride: 'peer'
         }
       ],
-      eventUrl: `${protocol}://localhost:7053`,
       caUrl: 'http://localhost:7054',
       mspId: 'DEFAULT'
     }

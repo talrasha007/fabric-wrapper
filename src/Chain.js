@@ -29,10 +29,10 @@ function getCertInfo(cert) {
 class Chain {
   constructor(enrollObj, options) {
     let eventhub;
-    if (options.eventUrl) {
-      const { opt } = util.getPeerOpt(options)[0];
+    const { eventUrl, opt } = util.getPeerOpt(options)[0];
+    if (eventUrl) {
       eventhub = new EventHub(enrollObj.client);
-      eventhub.setPeerAddr(options.eventUrl, opt);
+      eventhub.setPeerAddr(eventUrl, opt);
       eventhub.connect();
     }
 
