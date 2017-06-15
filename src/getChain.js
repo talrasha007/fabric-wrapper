@@ -87,5 +87,6 @@ module.exports = async function (options) {
     chain.addPeer(new Peer(url, opt));
   }
 
+  chain.setPrimaryPeer(this.getPeers()[0]);
   return new Chain({ client, chain, submitter, pubKey }, options);
 };
