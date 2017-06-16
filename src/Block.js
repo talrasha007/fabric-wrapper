@@ -7,7 +7,7 @@ const Chaincode = grpc.load(path.join(protoBase, '/peer/chaincode.proto')).proto
 function decodeCcPayload(envelope) {
   try {
     const payload = envelope.payload.data.actions[0].payload.chaincode_proposal_payload;
-    const data = Chaincode.ChaincodeInvocationSpec.decode(new Buffer(payload.input));
+    const data = Chaincode.ChaincodeInvocationSpec.decode(payload.input);
     return {
       signature: envelope.signature.toString('hex'),
       payload: {
