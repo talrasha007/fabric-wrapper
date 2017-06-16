@@ -33,7 +33,7 @@ async function getSubmitter(client, options) {
       const caService = new CaService(options.caUrl);
       const caClient = caService._fabricCAClient;
 
-      const key = await caService.cryptoPrimitives.generateKey();
+      const key = await caService.getCryptoSuite().generateKey();
       const csr = key.generateCSR(`CN=${enrollmentID},OU=${ou}`);
       const enrollResponse = await caClient.enroll(enrollmentID, enrollmentSecret, csr);
       enrollment = {
