@@ -3,7 +3,7 @@ const getChain = require('./getChain');
 (async function () {
   const chain = await getChain();
 
-  // console.log('Query installed cc for peer0: ', await chain.queryInstalledChaincodes(0));
+  console.log('Query installed cc for peer0: ', await chain.queryInstalledChaincodes(0));
   console.log('Query instantiated cc: ', await chain.queryInstantiatedChaincodes());
 
   chain.eventhub.registerBlockEvent(block => {

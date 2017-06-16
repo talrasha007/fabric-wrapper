@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const utils = require('fabric-client/lib/utils');
 const EventHub = require('fabric-client/lib/EventHub.js');
-const Client = require('fabric-client');
 const X509 = require('jsrsasign').X509;
 
 const util = require('./util');
@@ -54,18 +52,8 @@ class Chain {
   decodeBlock(block) {
     const { header, data, metadata } = block;
     const payloads = data.data.map(item => Block.decodeCcPayload(item) || item);
-
-    if (Buffer.isBuffer(header.previous_hash)) {
-      header.previous_hash = header.previous_hash.toString('hex');
-    }
-
-    if (Buffer.isBuffer(header.data_hash)) {
-      header.data_hash = header.data_hash.toString('hex');
-    }
-
     return { header, metadata, payloads };
   }
-
 
   extractCcExecInfo(block) {
     try {
@@ -99,9 +87,8 @@ class Chain {
   }
 
   buildTransactionID() {
-    const nonce = utils.getNonce();
-    const txId = Client.buildTransactionID(nonce, this.submitter);
-    return { nonce, txId };
+    const txId = this.client.newTransactionID();
+    return { nonce: txId.getNonce(), txId };
   }
 
   async commitTransaction(proposalRes, txId) {
@@ -110,7 +97,7 @@ class Chain {
 
     if (this.eventhub) {
       const waitPromise = new Promise((resolve, reject) => {
-        this.eventhub.registerTxEvent(txId.toString(), (tx, code) => {
+        this.eventhub.registerTxEvent(txId.getTransactionID(), (tx, code) => {
           if (code === 'VALID') resolve();
           else reject(code);
         });
@@ -123,7 +110,7 @@ class Chain {
   }
 
   async queryMspMembers() {
-    return this.chain.getOrganizationUnits();
+    return this.chain.getOrganizations();
   }
 
   async queryChannels(peerIdx = 0) {

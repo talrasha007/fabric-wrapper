@@ -12,12 +12,11 @@ const KEYUTIL = jsrsa.KEYUTIL;
 const EcdsaKey = rewire('fabric-client/lib/impl/ecdsa/key');
 EcdsaKey.__set__('KEYUTIL', KEYUTIL); // Fix KEYUTIL issue.
 
-const CryptoSuite = require('fabric-client/lib/impl/CryptoSuite_ECDSA_AES');
 const KeyStore = require('fabric-client/lib/impl/CryptoKeyStore');
 
 const util = require('./util');
 const Chain = require('./Chain');
-const keyStorePath = CryptoSuite.getDefaultKeyStorePath();
+const keyStorePath = `${require('os').homedir()}/.hfc-key-store`;
 
 async function getSubmitter(client, options) {
   const { enrollmentID } = options.enrollment;
@@ -68,7 +67,7 @@ module.exports = async function (options) {
   }
 
   const client = new FabricClient();
-  const chain = client.newChain(options.channelId);
+  const chain = client.newChannel(options.channelId);
 
   const store = await FabricClient.newDefaultKeyValueStore({
     path: path.join(keyStorePath, options.uuid) //store eCert in the kvs directory
@@ -87,6 +86,6 @@ module.exports = async function (options) {
     chain.addPeer(new Peer(url, opt));
   }
 
-  chain.setPrimaryPeer(chain.getPeers()[0]);
+  // chain.setPrimaryPeer(chain.getPeers()[0]);
   return new Chain({ client, chain, submitter, pubKey }, options);
 };
