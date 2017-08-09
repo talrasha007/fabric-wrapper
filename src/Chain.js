@@ -31,7 +31,7 @@ class Chain {
     const { eventUrl, opt } = util.getPeerOpt(options)[0];
     if (eventUrl) {
       eventhub = new EventHub(enrollObj.client);
-      eventhub.setPeerAddr(eventUrl, _.default(opt, {
+      eventhub.setPeerAddr(eventUrl, _.defaults(opt, {
         'grpc.http2.keepalive_time': 60,
         'grpc.keepalive_time_ms': 60000,
         'grpc.http2.keepalive_timeout': 20,

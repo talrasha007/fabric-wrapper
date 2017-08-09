@@ -1,6 +1,6 @@
 {
   "name": "fabric-wrapper",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "A wrapper for fabric-client & fabric-ca-client.",
   "main": "index.js",
   "repository": {
