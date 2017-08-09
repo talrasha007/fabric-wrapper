@@ -1,4 +1,5 @@
-const fs = require('fs');
+const _ = require('co-lodash');
+// const fs = require('fs');
 const path = require('path');
 const EventHub = require('fabric-client/lib/EventHub.js');
 const X509 = require('jsrsasign').X509;
@@ -30,7 +31,12 @@ class Chain {
     const { eventUrl, opt } = util.getPeerOpt(options)[0];
     if (eventUrl) {
       eventhub = new EventHub(enrollObj.client);
-      eventhub.setPeerAddr(eventUrl, opt);
+      eventhub.setPeerAddr(eventUrl, _.default(opt, {
+        'grpc.http2.keepalive_time': 60,
+        'grpc.keepalive_time_ms': 60000,
+        'grpc.http2.keepalive_timeout': 20,
+        'grpc.keepalive_timeout_ms': 20000
+      }));
       eventhub.connect();
     }
 
