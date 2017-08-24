@@ -161,7 +161,11 @@ class Chain {
     };
 
     const res = await this.chain.sendTransactionProposal(request);
-    return await this.commitTransaction(res, txId);
+
+    return _.extend(
+      { txId: txId.getTransactionID() },
+      await this.commitTransaction(res, txId)
+    );
   }
 
   async installChaincode(opt) {
