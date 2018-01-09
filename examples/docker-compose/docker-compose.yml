@@ -38,6 +38,14 @@ services:
       - "7050:7050"
     command: orderer
 
+  couchdb:
+    container_name: couchdb
+    image: hyperledger/fabric-couchdb
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - "5984:5984"
+
   peer:
     extends:
       file: peer.yml
@@ -47,6 +55,8 @@ services:
     environment:
       - CORE_PEER_ID=peer
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
     links:
       - ca
       - orderer
@@ -56,6 +66,7 @@ services:
     depends_on:
       - ca
       - orderer
+      - couchdb
 
   cli:
     container_name: cli
