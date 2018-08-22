@@ -1,0 +1,27 @@
+{
+  "name": "fabric-utils",
+  "version": "0.0.1",
+  "description": "utils to make fabric client easier to use.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/talrasha007/fabric-utils.git"
+  },
+  "keywords": [
+    "fabric",
+    "utils"
+  ],
+  "author": "Tal Rasha",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/talrasha007/fabric-utils/issues"
+  },
+  "homepage": "https://github.com/talrasha007/fabric-utils#readme",
+  "dependencies": {
+    "fabric-ca-client": "~1.2.1",
+    "fabric-client": "~1.2.1"
+  }
+}
