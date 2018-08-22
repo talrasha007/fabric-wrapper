@@ -29,6 +29,8 @@ services:
         - ORDERER_GENERAL_GENESISMETHOD=file
         - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
     volumes:
+        - ../crypto-config/ordererOrganizations/example.com/peers/orderer0.example.com/msp:/var/hyperledger/msp
+        - ../crypto-config/ordererOrganizations/example.com/peers/orderer0.example.com/tls:/var/hyperledger/tls
         - ../genesis_block.pb:/var/hyperledger/orderer/orderer.genesis.block
     ports:
       - "7050:7050"
@@ -51,8 +53,13 @@ services:
     hostname: peer0.org1.example.com
     environment:
       - CORE_PEER_ID=peer0.org1.example.com
+      - CORE_PEER_LOCALMSPID=org1.example.com
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
+    volumes:
+      - ../crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/var/hyperledger/msp
+      - ../crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls:/var/hyperledger/tls
+      - ../crypto-config/peerOrganizations/org1.example.com/users:/var/hyperledger/users
     links:
       - ca
       - orderer
