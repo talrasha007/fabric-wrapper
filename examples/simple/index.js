@@ -24,6 +24,25 @@ module.exports = {
     });
   },
 
+  getOrderer(client) {
+    return client.newOrderer(
+      this.ordererOptions.url
+    );
+  },
+
+  getChannel(client) {
+    const channel = client.newChannel('my-channel');
+
+    const orderer = this.getOrderer(client);
+    channel.addOrderer(orderer);
+
+    this.peersOptions.forEach(po => {
+      channel.addPeer(client.newPeer(po.url, po.opts));
+    });
+
+    return channel;
+  },
+
   get ordererOptions() {
     return {
       url: 'grpc://localhost:7050'
