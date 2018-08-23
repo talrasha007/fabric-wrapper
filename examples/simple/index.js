@@ -30,6 +30,12 @@ module.exports = {
     };
   },
 
+  get peersOptions() {
+    return [
+      { url: 'grpc://localhost:7051' }
+    ];
+  },
+
   get channelTx() {
     return fs.readFileSync(__dirname + '/my_channel_tx.pb');
   }
