@@ -2,9 +2,7 @@ const network = require('./network');
 
 (async () => {
   const client = await network.getOrdererClient();
-
-  const ordererOpt = network.ordererOptions;
-  const orderer = client.newOrderer(ordererOpt.url, ordererOpt.opts);
+  const orderer = network.getOrderer(client);
 
   const resp = await client.createChannel(orderer, 'my-channel', network.channelTx);
   console.log(resp);
