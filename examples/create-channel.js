@@ -1,8 +1,6 @@
-const simple = require('./simple');
+const network = require('./network');
 
 (async () => {
-  const network = simple;
-
   const client = await network.getOrdererClient();
 
   const ordererOpt = network.ordererOptions;
