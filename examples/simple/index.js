@@ -30,15 +30,16 @@ module.exports = {
     );
   },
 
+  getPeers(client) {
+    return this.peersOptions.map(po => client.newPeer(po.url, po.opts));
+  },
+
   getChannel(client) {
     const channel = client.newChannel('my-channel');
 
     const orderer = this.getOrderer(client);
     channel.addOrderer(orderer);
-
-    this.peersOptions.forEach(po => {
-      channel.addPeer(client.newPeer(po.url, po.opts));
-    });
+    this.getPeers(client).forEach(channel.addPeer.bind(channel));
 
     return channel;
   },
