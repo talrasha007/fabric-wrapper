@@ -20,7 +20,6 @@ services:
   orderer:
     image: hyperledger/fabric-orderer:1.2.0
     container_name: orderer
-    hostname: orderer0.example.com
     environment:
         - ORDERER_GENERAL_LEDGERTYPE=file
         - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -36,7 +35,6 @@ services:
 
   couchdb:
     container_name: couchdb
-    hostname: couchdb
     image: hyperledger/fabric-couchdb:0.4.10
     # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
     # for example map it to utilize Fauxton User Interface in dev environments.
@@ -48,7 +46,6 @@ services:
       file: peer.yml
       service: peer
     container_name: peer0
-    hostname: peer0.org1.example.com
     environment:
       #- CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_LOCALMSPID=SampleOrg

@@ -6,6 +6,7 @@ docker rm -v $id
 
 alias configtxgen='docker run --rm\
   -v $(pwd):/out\
+  -v $(pwd)/configtx.yaml:/etc/hyperledger/fabric/configtx.yaml\
   hyperledger/fabric-tools:1.2.0 configtxgen'
 
 configtxgen -outputBlock /out/genesis_block.pb -profile SampleSingleMSPSolo -channelID orderer-system-channel
