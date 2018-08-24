@@ -1,7 +1,7 @@
 const network = require('./network');
 
 (async () => {
-  const client = await network.getOrdererClient();
+  const client = await network.clientForOrderer();
 
   process.env['GOPATH'] = __dirname + '/chaincode/go/';
   const chaincodePath = 'fcw_example';

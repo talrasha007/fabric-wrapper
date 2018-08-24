@@ -1,7 +1,7 @@
 const network = require('./network');
 
 (async () => {
-  const client = await network.getOrdererClient();
+  const client = await network.clientForPeer();
   const channel = network.getChannel(client);
 
   const ccResp = await Promise.all([

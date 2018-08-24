@@ -2,23 +2,31 @@ const fs = require('fs');
 const utils = require('../../');
 
 module.exports = {
-  fromCa() {
+  clientForOrderer() {
     return utils.getClient({
       uuid: 'test-fabric-examples-simple',
       mspId: 'SampleOrg',
-      user: 'admin',
-      password: 'adminpw',
-      ca: {
-        url: 'http://localhost:7054'
-      }
+      user: 'orderer-admin',
+      privateKey: fs.readFileSync(__dirname + '/msp/keystore/key.pem'),
+      signedCert: fs.readFileSync(__dirname + '/msp/signcerts/peer.pem')
     });
   },
 
-  getOrdererClient() {
+  clientForPeerAdmin() {
     return utils.getClient({
       uuid: 'test-fabric-examples-simple',
       mspId: 'SampleOrg',
-      user: 'admin-orderer',
+      user: 'peer-admin',
+      privateKey: fs.readFileSync(__dirname + '/msp/keystore/key.pem'),
+      signedCert: fs.readFileSync(__dirname + '/msp/signcerts/peer.pem')
+    });
+  },
+
+  clientForPeer() {
+    return utils.getClient({
+      uuid: 'test-fabric-examples-simple',
+      mspId: 'SampleOrg',
+      user: 'peer-user',
       privateKey: fs.readFileSync(__dirname + '/msp/keystore/key.pem'),
       signedCert: fs.readFileSync(__dirname + '/msp/signcerts/peer.pem')
     });
