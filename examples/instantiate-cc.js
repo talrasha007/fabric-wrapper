@@ -9,7 +9,6 @@ const network = require('./network');
   const ccResp = await channel.instantiateChaincode({
     chaincodeId: 'fcw_go',
     chaincodeVersion: 'v0',
-    fcn: 'init',
     args: ['100']
   });
 
