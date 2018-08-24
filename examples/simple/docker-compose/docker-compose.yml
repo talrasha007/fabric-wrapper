@@ -8,15 +8,6 @@
 version: '2.0'
 
 services:
-  ca:
-    image: hyperledger/fabric-ca:1.2.0
-    container_name: ca
-    hostname: ca
-    ports:
-      - "8888:8888"
-      - "7054:7054"
-    command: fabric-ca-server start -b admin:adminpw
-
   orderer:
     image: hyperledger/fabric-orderer:1.2.0
     container_name: orderer
@@ -52,14 +43,12 @@ services:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
     links:
-      - ca
       - orderer
       - couchdb
     ports:
       - 7051:7051
       - 7053:7053
     depends_on:
-      - ca
       - orderer
       - couchdb
 
