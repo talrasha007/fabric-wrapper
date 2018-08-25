@@ -1,4 +1,4 @@
-# fabric-utils
+# fabric-wrapper
 *NOTICE: version 1.2 is no longer compatible whit previous versions.*  
 *Version x.y.z will be a wrapper of fabric-client @x.y.\**  
 
