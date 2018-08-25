@@ -116,7 +116,7 @@ Organizations:
        # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
         #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
-        Policies: &Org1ExampleComPolicies
+        Policies: &Org1Policies
             Readers:
                 Type: Signature
                 Rule: "OR('Org1MSP.member')"
