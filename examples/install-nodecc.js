@@ -1,7 +1,7 @@
 const network = require('./network');
 
 (async () => {
-  const client = await network.clientForOrderer();
+  const client = await network.clientForPeerAdmin();
 
   const chaincodePath = __dirname + '/chaincode/node/fcw_example';
 

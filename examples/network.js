@@ -1,3 +1,6 @@
 const simple = require('./simple');
+const tls = require('./tls');
 
-module.exports = simple;
+const networks = { tls, simple };
+
+module.exports = networks[process.env.NETWORK] || tls;
