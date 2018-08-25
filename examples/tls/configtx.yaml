@@ -80,35 +80,35 @@ Channel: &ChannelDefaults
 #
 ################################################################################
 Organizations:
-    - &ExampleCom
-        Name: ExampleCom
-        ID: example.com
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
         AdminPrincipal: Role.ADMIN
-        MSPDir: ./ordererOrganizations/example.com/msp
+        MSPDir: crypto-config/ordererOrganizations/example.com/msp
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
         #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
         Policies: &ExampleComPolicies
             Readers:
                 Type: Signature
-                Rule: "OR('ExampleCom.member')"
+                Rule: "OR('OrdererMSP.member')"
                 # If your MSP is configured with the new NodeOUs, you might
                 # want to use a more specific rule like the following:
                 # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('ExampleCom.member')"
+                Rule: "OR('OrdererMSP.member')"
                 # If your MSP is configured with the new NodeOUs, you might
                 # want to use a more specific rule like the following:
                 # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('ExampleCom.admin')"
+                Rule: "OR('OrdererMSP.admin')"
 
-    - &Org1ExampleCom
-        Name: Org1ExampleCom
-        ID: org1.example.com
-        MSPDir: ./peerOrganizations/org1.example.com/msp
+    - &Org1
+        Name: Org1
+        ID: Org1MSP
+        MSPDir: crypto-config/peerOrganizations/org1.example.com/msp
         AdminPrincipal: Role.ADMIN
         AnchorPeers:
             - Host: peer0.org1.example.com
@@ -119,47 +119,19 @@ Organizations:
         Policies: &Org1ExampleComPolicies
             Readers:
                 Type: Signature
-                Rule: "OR('Org1ExampleCom.member')"
+                Rule: "OR('Org1MSP.member')"
                 # If your MSP is configured with the new NodeOUs, you might
                 # want to use a more specific rule like the following:
                 # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('Org1ExampleCom.member')"
+                Rule: "OR('Org1MSP.member')"
                 # If your MSP is configured with the new NodeOUs, you might
                 # want to use a more specific rule like the following:
                 # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('Org1ExampleCom.admin')"
-
-    - &Org2ExampleCom
-        Name: Org2ExampleCom
-        ID: org2.example.com
-        MSPDir: ./peerOrganizations/org2.example.com/msp
-        AdminPrincipal: Role.ADMIN
-        AnchorPeers:
-            - Host: peer0.org2.example.com
-              Port: 7051
-       # Policies defines the set of policies at this level of the config tree
-        # For organization policies, their canonical path is usually
-        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
-        Policies: &Org2ExampleComPolicies
-            Readers:
-                Type: Signature
-                Rule: "OR('Org2ExampleCom.member')"
-                # If your MSP is configured with the new NodeOUs, you might
-                # want to use a more specific rule like the following:
-                # Rule: "OR('SampleOrg.admin', 'SampleOrg.peer', 'SampleOrg.client')"
-            Writers:
-                Type: Signature
-                Rule: "OR('Org2ExampleCom.member')"
-                # If your MSP is configured with the new NodeOUs, you might
-                # want to use a more specific rule like the following:
-                # Rule: "OR('SampleOrg.admin', 'SampleOrg.client')"
-            Admins:
-                Type: Signature
-                Rule: "OR('Org2ExampleCom.admin')"
+                Rule: "OR('Org1MSP.admin')"
 
 ################################################################################
 #
@@ -275,52 +247,25 @@ Application: &ApplicationDefaults
 #
 ################################################################################
 Profiles:
-    # SampleSingleMSPSolo defines a configuration which uses the Solo orderer,
-    # and contains a single MSP definition (the MSP sampleconfig).
-    # The Consortium SampleConsortium has only a single member, SampleOrg
-    SampleSingleMSPSolo:
+    MSPSolo:
         <<: *ChannelDefaults
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *ExampleCom
+                - *OrdererOrg
             Capabilities:
                 <<: *OrdererCapabilities
-        Application:
-            <<: *ApplicationDefaults
-            Organizations:
-                - *ExampleCom
-            Capabilities:
-                <<: *ApplicationCapabilities
         Consortiums:
             SampleConsortium:
                 Organizations:
-                    - *ExampleCom
-                    - *Org1ExampleCom
-                    - *Org2ExampleCom
+                    - *Org1
 
-    # SysTestChannel defines a channel for use with the System Test Orgs
-    SysTestChannel:
+    MSPChannel:
         <<: *ChannelDefaults
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *Org1ExampleCom
-                - *Org2ExampleCom
-            Capabilities:
-                <<: *ApplicationCapabilities
-
-    # SampleSingleMSPChannel defines a channel with only the sample org as a
-    # member.  It is designed to be used in conjunction with SampleSingleMSPSolo
-    # and SampleSingleMSPKafka orderer profiles
-    SampleTwoOrgMSPChannel:
-        <<: *ChannelDefaults
-        Consortium: SampleConsortium
-        Application:
-            <<: *ApplicationDefaults
-            Organizations:
-                - *Org1ExampleCom
-                - *Org2ExampleCom
+                - *Org1
             Capabilities:
                 <<: *ApplicationCapabilities
