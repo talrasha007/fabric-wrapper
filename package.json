@@ -1,6 +1,6 @@
 {
-  "name": "fabric-utils",
-  "version": "0.0.1",
+  "name": "fabric-wrapper",
+  "version": "1.2.0",
   "description": "utils to make fabric client easier to use.",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/talrasha007/fabric-utils.git"
+    "url": "git+https://github.com/talrasha007/fabric-wrapper.git"
   },
   "keywords": [
+    "blockchain",
+    "hyperledger",
     "fabric",
     "utils"
   ],
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "author": "Tal Rasha",
   "license": "MIT",
   "bugs": {
