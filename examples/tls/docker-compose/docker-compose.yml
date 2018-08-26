@@ -20,7 +20,7 @@ services:
       - "8888:8888"
       - "7054:7054"
     volumes:
-      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: fabric-ca-server start -b admin:adminpw
 
   orderer.example.com:
