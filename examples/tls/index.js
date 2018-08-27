@@ -1,37 +1,29 @@
 const fs = require('fs');
 const utils = require('../../');
 
-const ordererCyrptoDir = __dirname + '/crypto-config/ordererOrganizations/example.com/users/Admin@example.com';
-const org1CryptoDir = __dirname + '/crypto-config/peerOrganizations/org1.example.com/users';
+const cryptoConfigDir = __dirname + '/crypto-config';
+const org1Domain = 'org1.example.com';
 
 module.exports = {
-  clientForOrderer() {
-    return utils.getClient({
-      uuid: 'test-fabric-examples-tls',
-      mspId: 'OrdererMSP',
-      user: 'orderer-admin',
-      privateKey: fs.readFileSync(ordererCyrptoDir + '/msp/keystore/key.pem'),
-      signedCert: fs.readFileSync(ordererCyrptoDir + '/msp/signcerts/Admin@example.com-cert.pem')
-    });
-  },
-
   clientForPeerAdmin() {
+    const adminMsp = utils.crypto.mspFromCryptoGen(cryptoConfigDir, org1Domain, 'Admin');
+
     return utils.getClient({
       uuid: 'test-fabric-examples-tls',
       mspId: 'Org1MSP',
       user: 'peer-org1-admin',
-      privateKey: fs.readFileSync(org1CryptoDir + '/Admin@org1.example.com/msp/keystore/key.pem'),
-      signedCert: fs.readFileSync(org1CryptoDir + '/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem')
+      ...adminMsp
     });
   },
 
   clientForPeer() {
+    const userMsp = utils.crypto.mspFromCryptoGen(cryptoConfigDir, org1Domain, 'User1');
+
     return utils.getClient({
       uuid: 'test-fabric-examples-tls',
       mspId: 'Org1MSP',
       user: 'peer-org1-user',
-      privateKey: fs.readFileSync(org1CryptoDir + '/User1@org1.example.com/msp/keystore/key.pem'),
-      signedCert: fs.readFileSync(org1CryptoDir + '/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem')
+      ...userMsp
     });
   },
 
