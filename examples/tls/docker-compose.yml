@@ -20,7 +20,7 @@ services:
       - "8888:8888"
       - "7054:7054"
     volumes:
-      - ../crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: fabric-ca-server start -b admin:adminpw
 
   orderer.example.com:
@@ -37,8 +37,8 @@ services:
         - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
         - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
     volumes:
-        - ../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com:/etc/hyperledger/msp/orderer
-        - ../genesis_block.pb:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com:/etc/hyperledger/msp/orderer
+        - ./genesis_block.pb:/var/hyperledger/orderer/orderer.genesis.block
     ports:
       - "7050:7050"
     command: orderer
@@ -64,7 +64,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.org1.example.com:5984
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ../crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/msp/peer
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/msp/peer
     links:
       - orderer.example.com
       - couchdb.peer0.org1.example.com
