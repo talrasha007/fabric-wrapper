@@ -7,6 +7,8 @@
 OrdererOrgs:
   - Name: ExampleCom
     Domain: example.com
+    CA:
+      OrganizationalUnit: OrdererOU
     Specs:
       - Hostname: orderer
 
@@ -14,6 +16,8 @@ PeerOrgs:
   - Name: Org1ExampleCom
     Domain: org1.example.com
     EnableNodeOUs: false
+    CA:
+      OrganizationalUnit: Org1OU
     Template:
       Count: 1
     Users:
@@ -22,6 +26,8 @@ PeerOrgs:
   - Name: Org2ExampleCom
     Domain: org2.example.com
     EnableNodeOUs: false
+    CA:
+      OrganizationalUnit: Org2OU
     Template:
       Count: 1
     Users:

@@ -15,7 +15,7 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.org1.example.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/0d2672912a8a0ab8e5e0a635dbc9eea5a9bc4780add94dfd9ab74fc0b602c2f6_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/154c7e3e7891582272f2c5d3069d1d14882e815e14ca210e18ed235766999345_sk
     ports:
       - "8888:8888"
       - "7054:7054"
