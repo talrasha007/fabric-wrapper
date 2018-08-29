@@ -13,24 +13,24 @@ const network = require('./network');
     channel.invokeChaincode({
       chaincodeId: 'fcw_go',
       fcn: 'write',
-      args: ['bc', '456']
+      args: ['bc', JSON.stringify({ ok: true })]
     })
   ]);
 
   console.log(ccResp);
 
   console.log('Read from ledger for key "ab": ');
-  console.log((await channel.queryByChaincode({
+  console.log(await channel.queryStringChaincode({
     chaincodeId: 'fcw_go',
     fcn: 'read',
     args: ['ab']
-  })).map(b => b.toString()));
+  }));
 
   console.log('Read from ledger for key "bc": ');
-  console.log((await channel.queryByChaincode({
+  console.log(await channel.queryJsonChaincode({
     chaincodeId: 'fcw_go',
     fcn: 'read',
     args: ['bc']
-  })).map(b => b.toString()));
+  }));
 
 })().catch(console.log);
