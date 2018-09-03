@@ -1,6 +1,6 @@
 {
   "name": "fabric-wrapper",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "utils to make fabric client easier to use.",
   "main": "index.js",
   "scripts": {
