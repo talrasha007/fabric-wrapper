@@ -1,32 +1,21 @@
 const network = require('./network');
+const abi = require('./abi.json');
 
 (async () => {
   const client = await network.clientForPeerAdmin();
   const channel = network.getChannel(client);
+  const chaincode = channel.chaincode(abi);
 
   const chaincodePath = __dirname + '/chaincode/node/fcw_example_v2';
-  await client.installChaincode({
+  await chaincode.fcw_node.$install({
     targets: network.getPeers(client),
     chaincodePath,
     chaincodeType: 'node',
-    chaincodeId: 'fcw_node',
     chaincodeVersion: 'v2.0'
   });
 
   await channel.initialize();
 
-  const ccResp = await channel.upgradeChaincode({
-    chaincodeId: 'fcw_node',
-    chaincodeVersion: 'v2.0',
-    args: ['100']
-  });
-
-  console.log(ccResp);
-
-  console.log('Read from ledger for key "abc": ');
-  console.log((await channel.queryByChaincode({
-    chaincodeId: 'fcw_node',
-    fcn: 'read',
-    args: ['abc']
-  })).map(b => b.toString()));
+  console.log('Upgrade fcw_node', await chaincode.fcw_node.$upgrade('v2.0', '100'));
+  console.log('fcw_node.read(abc):', await chaincode.fcw_node.read('abc'));
 })().catch(console.log);
