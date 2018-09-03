@@ -1,0 +1,10 @@
+{
+  "fcw_go": {
+    "read": { "type": "query", "returnType": "string" },
+    "write": { "type": "invoke" }
+  },
+  "fcw_node": {
+    "read": { "type": "query", "returnType": "string" },
+    "write": { "type": "invoke" }
+  }
+}

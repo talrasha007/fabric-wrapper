@@ -1,36 +1,24 @@
 const network = require('./network');
+const abi = require('./abi.json');
 
 (async () => {
   const client = await network.clientForPeer();
   const channel = network.getChannel(client);
+  const chaincode = channel.chaincode(abi);
 
-  const ccResp = await Promise.all([
-    channel.invokeChaincode({
-      chaincodeId: 'fcw_go',
-      fcn: 'write',
-      args: ['ab', '123']
-    }),
-    channel.invokeChaincode({
-      chaincodeId: 'fcw_go',
-      fcn: 'write',
-      args: ['bc', JSON.stringify({ ok: true })]
-    })
-  ]);
+  console.log('Invoke fcw_go: ', await Promise.all([
+    chaincode.fcw_go.write('ab', '123'),
+    chaincode.fcw_go.write('bc', JSON.stringify({ ok: true }))
+  ]));
 
-  console.log(ccResp);
+  console.log('fcw_go.read ab:', await chaincode.fcw_go.read('ab'));
+  console.log('fcw_go.read bc:', await chaincode.fcw_go.read('bc'));
 
-  console.log('Read from ledger for key "ab": ');
-  console.log(await channel.queryStringChaincode({
-    chaincodeId: 'fcw_go',
-    fcn: 'read',
-    args: ['ab']
-  }));
+  console.log('Invoke fcw_node: ', await Promise.all([
+    chaincode.fcw_node.write('ab', '123'),
+    chaincode.fcw_node.write('bc', JSON.stringify({ ok: true }))
+  ]));
 
-  console.log('Read from ledger for key "bc": ');
-  console.log(await channel.queryJsonChaincode({
-    chaincodeId: 'fcw_go',
-    fcn: 'read',
-    args: ['bc']
-  }));
-
+  console.log('fcw_node.read ab:', await chaincode.fcw_node.read('ab'));
+  console.log('fcw_node.read bc:', await chaincode.fcw_node.read('bc'));
 })().catch(console.log);
