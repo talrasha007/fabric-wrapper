@@ -9,7 +9,7 @@ version: '2.0'
 
 services:
   ca.org1.example.com:
-    image: hyperledger/fabric-ca:1.2.0
+    image: hyperledger/fabric-ca:1.3.0
     container_name: ca.org1.example.com
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
@@ -24,7 +24,7 @@ services:
     command: fabric-ca-server start -b admin:adminpw
 
   orderer.example.com:
-    image: hyperledger/fabric-orderer:1.2.0
+    image: hyperledger/fabric-orderer:1.3.0
     container_name: orderer.example.com
     environment:
         - ORDERER_GENERAL_LEDGERTYPE=file
@@ -45,14 +45,14 @@ services:
 
   couchdb.peer0.org1.example.com:
     container_name: couchdb.peer0.org1.example.com
-    image: hyperledger/fabric-couchdb:0.4.10
+    image: hyperledger/fabric-couchdb:0.4.14
     # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
     # for example map it to utilize Fauxton User Interface in dev environments.
     ports:
       - "5984:5984"
 
   peer0.org1.example.com:
-    image: hyperledger/fabric-peer:1.2.0
+    image: hyperledger/fabric-peer:1.3.0
     container_name: peer0.org1.example.com
     environment:
       - CORE_LOGGING_PEER=info
